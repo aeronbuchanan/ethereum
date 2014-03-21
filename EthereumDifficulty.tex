@@ -24,13 +24,13 @@ Ethereum difficulty would be more stable if either 1) updated very much less oft
 
 Proof-of-Work (PoW) is an unfortunate necessity for dealing with ``infinite virtual node'' and ``spam'' attacks in a consensus based event log (commonly referred to as the block-chain). Anyone can add events to the shared log and so forks and branches will develop as additions are accepted by some and ignored by others. Additions can be ignored because someone deems them unacceptable or because the proposer is on a far flung corner of the network and delays in communications mean that the consensus has moved on too far by the time enough people get notified of them. When you come to read the log or make an addition, which event log do you take as the master? Being a consensus, it must be the log with the most votes. However, without PoW it would be trivial to create a large number of nodes to vote for (verify) a thief's log in which they erased an entry that they had used to pay someone, thus allowing them to spend that money a second time. In a pure identity-based voting system, the person with the most resources can win control of the system, as they can out-vote an uncoordinated honest majority. Furthermore, if it costs nothing to add events then the system can be spammed by attackers and rendered useless. Introducing PoW solves all these problems. With PoW, every one of the $N$ nodes gets to make many (quick, but non-negligible-time) attempts to add events to their favored log (and thus vote for it), each with a low chance of success. It provides a better solution to the voting problem, because on average, everyone gets roughly a $\frac{m}{N}$ chance of voting for a particular event log with $m$ being the multiple of the average node resources a particular node has. It also solves the spamming and network-delay problems by making it take, on average, an appreciable amount of time to add events to the log. However, as the available processing power changes, the average number of attempts that can be made per time will change, and so the effectiveness of the PoW will change. If processing power increases (faster nodes or more of them), the average time taken will decrease, reducing the effectiveness of the PoW, and vice versa. As such, the difficulty of a PoW attempt must be adjusted. Here, I briefly discuss update strategies.
 
+\newpage
+
 \section*{Strategy}
 
 To maintain a target block-time addition rate of one block per minute (or any target time) the difficulty of the atomic mining operation will have to be updated over time. Vitalik's updated white paper suggests the following update strategy:
 
 \begin{verbatim}
-difficulty(0) := 2^36 
-
 update := floor( difficulty(n-1) / 1000 )
 
 if (timestamp(n-1) - timestamp(n-500)) / 500 > 60
@@ -42,9 +42,9 @@ where {\tt difficulty(n)} is the level for the current block and {\tt timestamp(
 
 The averaging effectively adds lag to the system, so the result of an update is not seen until many blocks later. In the interim, the algorithm continues to change the difficulty in whatever the necessary direction. This leads to oscillations taking the 500-block average to $\pm 20\%$ when the underlying signal is steady-state (note that for clarity and ease of simulation, the probability of success, $p = \frac{1}{d}$, is used instead of the difficulty, $d$):
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-1_.png}
+\includegraphics[width=13cm]{SimulationGraphs/simulation_avg-500_upd-1_.png}
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-1_diff.png}
+\includegraphics[width=13cm]{SimulationGraphs/simulation_avg-500_upd-1_diff.png}
 
 This can be easily overcome by simply only updating every {\tt M} blocks:
 
@@ -158,7 +158,7 @@ else
 
 \newpage
 
-If this is applied to Ethereum, the updates occuring every 2000 blocks will come up once every 1 day and 9 hours. While the steady-state updates jump around a little, the performance profile is perfectly adequate. 
+If this is applied to Ethereum, the updates occuring every 2000 blocks will come up once every 1 day and 9 hours, which is fast enough, I reckon, although updates every 1000, or even 500 blocks seem not much less stable. While the steady-state updates jump around a little, the performance profile is perfectly adequate. The disadvantage of this update scheme is that it is purely reactive: the difficulty setting will always be behind the curve. However, updating every day will mean Ethereum won't be very far behind.
 
 \includegraphics[width=14cm]{SimulationGraphs/simulation_avg-2000_upd-2000_btc.png}
 
