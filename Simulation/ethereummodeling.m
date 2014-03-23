@@ -1,4 +1,7 @@
 
+# An Octave (free matlab clone) simulation of ethereum (and bitcoin for that matter)
+# https://www.gnu.org/software/octave/
+
 function ethereummodeling()
 	global identified;
 	identified = false;
