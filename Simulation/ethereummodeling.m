@@ -2,6 +2,15 @@
 # An Octave (free matlab clone) simulation of ethereum (and bitcoin for that matter)
 # https://www.gnu.org/software/octave/
 
+# Instructions:
+# Download this script file somewhere
+# Download and run Octave
+# > pwd
+# > cd path/to/script/directory
+# > ethereummodeling()
+
+# Goto line 101 for some more graphs
+
 function ethereummodeling()
 	global identified;
 	identified = false;
@@ -89,8 +98,8 @@ function ethereummodeling()
 	max_time = 1000 * target_time;
 	ns = calc_ns(tbase, max_time, time_res);
 
+	# toggle the commenting of the next two lines for different graphs 
 	#example(p, ns, tbase, target_time, speeds, freqs)
-
 	moving_diff_simulation(p, ns, speeds, freqs, target_time, tbase, 100000, 1000, 1000);
 
 	#keyboard
