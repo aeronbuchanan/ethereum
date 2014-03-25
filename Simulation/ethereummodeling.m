@@ -4,16 +4,23 @@
 
 # Instructions:
 # Download this script file somewhere
-# Download and run Octave
+# Download and run [QT]Octave
 # > pwd
 # > cd path/to/script/directory
+# > global identified
 # > ethereummodeling()
 
-# Goto line 101 for some more graphs
+# opmode can be
+# 'simulation' [default]
+# 'example'
 
-function ethereummodeling()
+function ethereummodeling(opmode)
 	global identified;
 	identified = false;
+
+	if nargin < 1
+		opmode = 'simulation'
+	end
 
 	# number of samples in time
 	time_res = 1000;
@@ -99,8 +106,12 @@ function ethereummodeling()
 	ns = calc_ns(tbase, max_time, time_res);
 
 	# toggle the commenting of the next two lines for different graphs 
-	#example(p, ns, tbase, target_time, speeds, freqs)
-	moving_diff_simulation(p, ns, speeds, freqs, target_time, tbase, 100000, 1000, 1000);
+	switch opmode
+		case 'example'
+			example(p, ns, tbase, target_time, speeds, freqs)
+		case 'simulation'
+			moving_diff_simulation(p, ns, speeds, freqs, target_time, tbase, 100000, 1000, 1000);
+	end
 
 	#keyboard
 end
@@ -108,6 +119,7 @@ end
 function moving_diff_simulation(p, ns, speeds, freqs, target_time, tbase, num_blocks, avg_win, update_period)
 
 	# simulation
+	difficulty_update_strategy = 'bitcoin';
 
 	overhead = 2e3; # something negligible to start with
 	proportion_comp = 0.0001; # this proportion of target_time on non-PoW comp
@@ -170,7 +182,7 @@ function moving_diff_simulation(p, ns, speeds, freqs, target_time, tbase, num_bl
 
 		if length(t_avgs) > avg_win && mod(length(t_times), update_period) == 0
 			# update diff
-			p = update_(p, t_avgs(avg_win:end), target_time);
+			p = update_(p, t_avgs(avg_win:end), target_time, difficulty_update_strategy);
 
 			update_needed = true;
 		end
@@ -234,9 +246,8 @@ function moving_diff_simulation(p, ns, speeds, freqs, target_time, tbase, num_bl
 	#keyboard
 end
 
-function new_p = update_(p, avgs, target)
+function new_p = update_(p, avgs, target, strategy)
 	global identified;
-	strategy = 'bitcoin';
 
 	switch strategy
 
@@ -297,6 +308,7 @@ function new_p = update_(p, avgs, target)
 			end
 	end
 
+	# p is a probability
 	new_p = max(0, min(1, new_p));
 end
 
@@ -360,12 +372,6 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 		disp([num2str(proportion_comp*100) '% comp: mean = ' num2str(mean_t) ', modal speed = ' num2str(mode_sp) ])
 	end
 
-	figure(1)
-	clf
-	semilogx(speeds, pdf_sps);
-	
-	pause
-
 	proportion_comp = 1e-5; 
 	[pdf_t, cdf_t, pdf_sp_given_t, cdf_sp_given_t, pdf_sp, cdf_sp] = calc_dists(p, ns, target_time, tbase, speeds, freqs, overhead, proportion_comp);
 
@@ -376,6 +382,9 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	title('probability that PoW will be solved in a particular time slot')
 	xlabel("time as a fraction of target time")
 	ylabel('probability density')
+	# add line for target_time
+	lims = axis;
+	plot([target_time, target_time], lims([3 4]), 'y')
 
 	figure(2)
 	clf
@@ -384,22 +393,32 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	title('cumulative probability that PoW will be solved in a particular time slot')
 	xlabel("time as a fraction of target time")
 	ylabel('cumulative probability')
+	# add line for target_time
+	lims = axis;
+	plot([target_time, target_time], lims([3 4]), 'y')
 
 	figure(3)
 	clf
 	hold on
-	tloglog(speeds, pdf_sp);
-	title('probability that PoW will be solved by a particular speed node')
-	xlabel('speed')
+	tloglog(speeds, freqs / sum(freqs), 'c');
+	tloglog(speeds, pdf_sp, 'k');
+	title("probability that PoW will be solved by a particular speed node\n(note shift from distribution of speeds, in cyan)")
+	xlabel('speed multiple')
 	ylabel('probability density')
+	# add line for average speed
+	lims = axis;
+	plot([1 1], lims([3 4]), 'y')
 
 	figure(4)
 	clf
 	hold on
 	tloglog(speeds, cdf_sp);
 	title('cumulative probability that PoW will be solved by a particular speed node')
-	xlabel('speed')
+	xlabel('speed multiple')
 	ylabel('cumulative probability')
+	# add line for average speed
+	lims = axis;
+	plot([1 1], lims([3 4]), 'y')
 
 	figure(5)
 	clf
@@ -408,6 +427,9 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	title('probability that PoW will be solved in a particular time slot by a particular speed node')
 	xlabel('speed multiple')
 	ylabel('probability density')
+	# add line for average speed
+	lims = axis;
+	plot([1 1], lims([3 4]), 'y')
 
 	figure(6)
 	clf
@@ -416,10 +438,13 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	title('cumulative probability that PoW will be solved for various times')
 	xlabel('speed multiple')
 	ylabel('cumulative probability')
+	# add line for average speed
+	lims = axis;
+	plot([1 1], lims([3 4]), 'y')
 	n = 1;
 	used_spis = [];
 	while n < length(ns)
-		if sum(cdf_tsp(n,:)) > 0
+		if sum(cdf_sp_given_t(n,:)) > 0
 			[spi, i] = quartile(speeds, cdf_sp_given_t(n,:), 0.5);
 			if length(find(used_spis==spi)) == 0
 				text(spi, min(0.5, cdf_sp_given_t(n,i)), ['t = ' num2str(n)]);
@@ -430,44 +455,6 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 			n = n + 1;
 		end
 	end
-
-	keyboard;
-
-	Nsp = length(speeds);
-	for i = 1:Nsp
-		A(i) = trapezium_integration(ns, pdfs_t(:, i));
-		mean_ts(i) = find_mean(ns, pdfs_t(:, i)) * tbase;
-		median_ts(i) = find_median(ns, cdfs_t(:, i)) * tbase;
-		mode_ts(i) = find_mode(ns, pdfs_t(:, i)) * tbase;
-		skew_ts(i) = skewness(ns * tbase, cdfs_t(:, i));
-
-		figure(1)
-		j = floor(length(ns)/(2+(i/Nsp-1/2)));
-		mid_t = tbase * ns(j);
-		mid_y = cdfs_t(j, i);
-		if mid_y > 0
-			text(mid_t, mid_y, ['sp = ' num2str(speeds(i))])
-		end
-	end
-
-	# optimal delay
-	rs = linspace(0,1,100);
-	for i = 1:Nsp
-		if freqs(i) == 0
-			continue
-		end
-		max_attempts(i) = target_time * speeds(i) / tbase - overhead;
-		for j = 1:length(rs)
-			r = overhead + floor( rs(j) * max_attempts(i) );
-			[pdf_t, pdfs_t, pdfs_n, pdf_n, cdf_t, cdfs_t] = calc_dists(p, ns, target_time, tbase, speeds, freqs, r);
-			payoffs(i,j) = pdf_n(i) / freqs(i);
-		end
-
-		plot(overhead + floor(rs*max_attempts(i)), payoffs(i,:));
-	end
-
-	for i = 1:Nsp; plot(overhead + floor(rs*max_attempts(i)), payoffs(i,:)); end
-	keyboard
 
 	A = trapezium_integration(ns, pdf_t)
 	mean_t = find_mean(ns, pdf_t) * tbase
@@ -488,6 +475,7 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	mode = find_mode(xs, pdf)
 	skew = skewness(xs, cdf)
 
+	disp(["Type 'dbquit' to exit debug mode"])
 	keyboard
 end
 
