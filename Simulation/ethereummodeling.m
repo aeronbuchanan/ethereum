@@ -375,10 +375,12 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	proportion_comp = 1e-5; 
 	[pdf_t, cdf_t, pdf_sp_given_t, cdf_sp_given_t, pdf_sp, cdf_sp] = calc_dists(p, ns, target_time, tbase, speeds, freqs, overhead, proportion_comp);
 
+	ts = ns * tbase;
+	
 	figure(1)
 	clf
 	hold on
-	tloglog(ns * tbase, pdf_t, 'b');
+	tloglog(ts, pdf_t, 'b');
 	title('probability that PoW will be solved in a particular time slot')
 	xlabel("time as a fraction of target time")
 	ylabel('probability density')
@@ -389,7 +391,7 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 	figure(2)
 	clf
 	hold on
-	tloglog(ns * tbase, cdf_t, 'b');
+	tloglog(ts, cdf_t, 'b');
 	title('cumulative probability that PoW will be solved in a particular time slot')
 	xlabel("time as a fraction of target time")
 	ylabel('cumulative probability')
@@ -456,11 +458,11 @@ function example(p, ns, tbase, target_time, speeds, freqs)
 		end
 	end
 
-	A = trapezium_integration(ns, pdf_t)
+	A = trapezium_integration(ts, pdf_t)
 	mean_t = find_mean(ns, pdf_t) * tbase
 	median_t = find_median(ns, cdf_t) * tbase
 	mode_t = find_mode(ns, pdf_t) * tbase
-	skew_t = skewness(ns * tbase, cdf_t)
+	skew_t = skewness(ts, cdf_t)
 	
 	disp('test')
 	xs = logspace(-10,2,500);
