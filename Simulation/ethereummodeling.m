@@ -1,6 +1,10 @@
 
 # An Octave (free matlab clone) simulation of ethereum (and bitcoin for that matter)
 # https://www.gnu.org/software/octave/
+#
+# Copyright 2014 Aeron Buchanan
+# Released under the Creative Commons Attribution-ShareAlike 3.0 License
+# http://creativecommons.org/licenses/by-sa/3.0/
 
 # Instructions:
 # Download this script file somewhere
