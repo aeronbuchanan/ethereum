@@ -40,7 +40,7 @@ I'm going to start at the beginning and describe everything. This is important f
 Ethereum is a de-centralized collaborative shared-state update platform with a turing-complete processing capability. It is rather like a shared cloud computer the size of the internet:
 
 \begin{center}
-\includegraphics[trim=0cm 10cm 0cm 2cm, clip, width=15cm]{FlowDiagramEthereumOnly.pdf}
+\includegraphics[trim=0cm 10cm 0cm 2cm, clip, width=15cm]{Diagrams/FlowDiagramEthereumOnly.pdf}
 \end{center}
 
 Anyone can initiate a transaction to send {\tt [funds + data]} to another account, as long as they have sufficient funds available. That transaction will either 
@@ -60,12 +60,12 @@ The target account for {\tt fund} transfers can either be
 A contract can update its own RAM arbitrarily and generate new transactions to do any of the above with its own funds.
 
 \begin{center}
-\includegraphics[trim=1cm 17cm 1cm 1cm, clip, width=15cm]{FlowDiagramEthereumTXTypes.pdf}
+\includegraphics[trim=1cm 17cm 1cm 1cm, clip, width=15cm]{Diagrams/FlowDiagramEthereumTXTypes.pdf}
 \end{center}
 
 Note: beyond a free quota of operations, every executed instruction must be paid for from the contract's balance.
 
-Ethereum is realized by a network of computer processing entities, or nodes, that are each independently calculating the state progression, and then reaching a consensus to agree on the "true" state. By way of implementation, information about any given state update is held in something called a block. Nodes select transaction requests posted by anyone with an Ethereum account and calculate the resulting block to add to the chain of blocks that represents the entire state history of Ethereum. As all nodes do this independently, we let the node who (correctly) does this first have the definitive say as to what the next update is, \ie which transactions are included as part of the next state progression. There is a payment of newly created ether, \R for getting there first (as a way of reward for participating) and, importantly, the potential to receive compensation for performing all the necessary verifications and execution of computation, via transaction and computation fees. Additionally, a proof-of-work (PoW) calculation (computation that is essentially wasted) is required to prove the time of completion is as stated. The PoW has the side-effect that, if no-one included any transactions in the block they are racing to add and all the nodes were of equal computational power, it would be random as to who won each time, \ie with \N nodes the chance of any node getting their block onto the block chain is $\frac{1}{\N}$. If the distribution of computing power is uneven, the chance is in proportion to the fraction of the total network's compute power that a particular node has, \eg a node with 25\% of the compute power of the total network has a 25\% chance of getting any of their block updates onto the consensus block chain. Because of the rewards available, nodes are referred to as miners. To go some way to reward miners who only just missed out on getting their block onto the chain, a GHOST reward is paid to them.
+Ethereum is realized by a network of computer processing entities, or nodes, that are each independently calculating the state progression, and then reaching a consensus to agree on the ``true'' state. By way of implementation, information about any given state update is held in something called a block. Nodes select transaction requests posted by anyone with an Ethereum account and calculate the resulting block to add to the chain of blocks that represents the entire state history of Ethereum. As all nodes do this independently, we let the node who (correctly) does this first have the definitive say as to what the next update is, \ie which transactions are included as part of the next state progression. There is a payment of newly created ether, \R for getting there first (as a way of reward for participating) and, importantly, the potential to receive compensation for performing all the necessary verifications and execution of computation, via transaction and computation fees. Additionally, a proof-of-work (PoW) calculation (computation that is essentially wasted) is required to prove the time of completion is as stated. The PoW has the side-effect that, if no-one included any transactions in the block they are racing to add and all the nodes were of equal computational power, it would be random as to who won each time, \ie with \N nodes the chance of any node getting their block onto the block chain is $\frac{1}{\N}$. If the distribution of computing power is uneven, the chance is in proportion to the fraction of the total network's compute power that a particular node has, \eg a node with 25\% of the compute power of the total network has a 25\% chance of getting any of their block updates onto the consensus block chain. Because of the rewards available, nodes are referred to as miners. To go some way to reward miners who only just missed out on getting their block onto the chain, a GHOST reward is paid to them.
 
 \subsection*{\ether Flow}
 
@@ -81,7 +81,7 @@ Looking at the flow of \ether in Ethereum, we can categorize the things that are
 and it could be that an actual real participant combines several of these personalities. Because I think in diagrams, here's a picture:
 
 \begin{center}
-\includegraphics[trim=1cm 4cm 1cm 1.5cm, clip, width=15cm]{EtherFlow.pdf}
+\includegraphics[trim=1cm 4cm 1cm 1.5cm, clip, width=15cm]{Diagrams/EtherFlow.pdf}
 \end{center}
 
 The two are equivalent. The thick arrows are the descriptions of the above processes and the thin ones are extra to account for real participants being combinations. A few comments:
@@ -166,7 +166,7 @@ and the revenue multiplier will increase, eventually linearly, as the basefee in
 This suggests that more powerful nodes see their advantage in terms of diminishing returns, which is pleasantly self-limiting:
 
 \begin{center}
-\includegraphics[trim=1cm 1cm 1cm 6cm, clip, width=15cm]{CompPayoff.pdf}
+\includegraphics[trim=1cm 1cm 1cm 6cm, clip, width=15cm]{Diagrams/CompPayoff.pdf}
 \end{center}
 
 Two important notes regarding the generality of this result:

@@ -42,9 +42,9 @@ where {\tt difficulty(n)} is the level for the current block and {\tt timestamp(
 
 The averaging effectively adds lag to the system, so the result of an update is not seen until many blocks later. In the interim, the algorithm continues to change the difficulty in whatever the necessary direction. This leads to oscillations taking the 500-block average to $\pm 20\%$ when the underlying signal is steady-state (note that for clarity and ease of simulation, the probability of success, $p = \frac{1}{d}$, is used instead of the difficulty, $d$):
 
-\includegraphics[width=13cm]{SimulationGraphs/simulation_avg-500_upd-1_.png}
+\includegraphics[width=13cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-1_.png}
 
-\includegraphics[width=13cm]{SimulationGraphs/simulation_avg-500_upd-1_diff.png}
+\includegraphics[width=13cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-1_diff.png}
 
 This can be easily overcome by simply only updating every {\tt M} blocks:
 
@@ -65,9 +65,9 @@ else
 \end{verbatim}
 at the expense of responsiveness. However, the statistics of the mining nodes are not going to change dramatically in the order of 8 hours, so effective responsiveness is potentially adequate. The update {\tt k} must then be chosen to achieve a particular maximum update rate. The rate needs to be set high enough to be able to keep up with changes, but not so high as to create oscillatory behaviour when the mining power is not changing. Matching the first algorithm's ability to double in less than half a day, for example, is too much to update in one go:
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-500_p0-5.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-500_p0-5.png}
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-500_p0-5_diff.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-500_p0-5_diff.png}
 
 \newpage
 
@@ -89,9 +89,9 @@ else
 \end{verbatim}
 Note: this is based on updating the probability proportionally.
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-500_Pcontroller.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-500_Pcontroller.png}
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-500_Pcontroller_diff.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-500_Pcontroller_diff.png}
 
 Tuning this to perform adequately over the full range of processor speeds is at best tricky and time-consuming, and might not actually be possible.
 
@@ -115,9 +115,9 @@ update := K_p * error + K_i * integral + K_d * derivative
 difficulty(n) := difficulty(n-1) + update
 \end{verbatim}
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-1_PID.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-1_PID.png}
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-500_upd-1_PID_diff.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-1_PID_diff.png}
 
 The PID controller offers the potential for good stability in steady state as well fast response to changes in node processor profiles. Many more simulations would need to be run to get anything close to optimal parameters. Although far from optimal, initial tests suggest the above parameters are an adequate start.
 
@@ -125,7 +125,7 @@ The PID controller offers the potential for good stability in steady state as we
 
 For comparison, this is what steady state looks like with an single optimized difficulty setting:
 \begin{center}
-\includegraphics[width=12cm]{SimulationGraphs/simulation_avg-500_upd-none.png}
+\includegraphics[width=12cm]{Diagrams/SimulationGraphs/simulation_avg-500_upd-none.png}
 \end{center}
 
 \section*{Other Approaches}
@@ -160,9 +160,9 @@ else
 
 If this is applied to Ethereum, the updates occuring every 2000 blocks will come up once every 1 day and 9 hours, which is fast enough, I reckon, although updates every 1000, or even 500 blocks seem not much less stable. While the steady-state updates jump around a little, the performance profile is perfectly adequate. The disadvantage of this update scheme is that it is purely reactive: the difficulty setting will always be behind the curve. However, updating every day will mean Ethereum won't be very far behind.
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-2000_upd-2000_btc.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-2000_upd-2000_btc.png}
 
-\includegraphics[width=14cm]{SimulationGraphs/simulation_avg-2000_upd-2000_btc_diff.png}
+\includegraphics[width=14cm]{Diagrams/SimulationGraphs/simulation_avg-2000_upd-2000_btc_diff.png}
 
 
 
